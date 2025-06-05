@@ -1,23 +1,54 @@
 export class BinaryTreeNode<T> {
   private readonly _value: T;
 
+  private _parent?: BinaryTreeNode<T>;
+
   private readonly _left?: BinaryTreeNode<T>;
 
   private readonly _right?: BinaryTreeNode<T>;
 
   private readonly _height: number;
 
-  constructor(value: T, left?: BinaryTreeNode<T>, right?: BinaryTreeNode<T>) {
+  private readonly _depth: number;
+
+  constructor(
+    value: T,
+    parent?: BinaryTreeNode<T>,
+    left?: BinaryTreeNode<T>,
+    right?: BinaryTreeNode<T>
+  ) {
     this._value = value;
 
+    this._parent = parent;
     this._left = left;
     this._right = right;
 
     this._height = Math.max(left?._height ?? 0, right?._height ?? 0) + 1;
+    this._depth = parent === undefined ? 0 : parent._depth + 1;
+  }
+
+  private set parent(node: BinaryTreeNode<T>) {
+    this._parent = node;
+  }
+
+  public get value(): T {
+    return this._value;
+  }
+
+  public get left(): BinaryTreeNode<T> | undefined {
+    return this._left;
+  }
+
+  public get right(): BinaryTreeNode<T> | undefined {
+    return this._right;
   }
 
   public get height(): number {
     return this._height;
+  }
+
+  public get depth(): number {
+    return this._depth;
   }
 
   public get isBalanced(): boolean {
@@ -35,11 +66,27 @@ export class BinaryTreeNode<T> {
       return undefined;
     }
 
-    return new BinaryTreeNode(
-      node.val,
-      BinaryTreeNode.fromLeetCode(node.left),
-      BinaryTreeNode.fromLeetCode(node.right)
-    );
+    const left = BinaryTreeNode.fromLeetCode(node.left);
+    const right = BinaryTreeNode.fromLeetCode(node.right);
+    const parent = new BinaryTreeNode(node.val, left, right);
+
+    if (left !== undefined) {
+      left.parent = parent;
+    }
+
+    if (right !== undefined) {
+      right.parent = parent;
+    }
+
+    return parent;
+  }
+
+  public inOrder(): ReadonlyArray<BinaryTreeNode<T>> {
+    return [
+      ...(this._left?.inOrder() ?? []),
+      this,
+      ...(this._right?.inOrder() ?? []),
+    ];
   }
 }
 

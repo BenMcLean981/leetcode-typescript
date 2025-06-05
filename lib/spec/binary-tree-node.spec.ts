@@ -67,4 +67,22 @@ describe("BinaryTreeNode", () => {
       expect(tree.isBalanced).toBe(false);
     });
   });
+
+  describe("inOrder", () => {
+    it("Returns single node.", () => {
+      const tree = new BinaryTreeNode(5);
+
+      expect(tree.inOrder()).toStrictEqual([5]);
+    });
+
+    it("Traverses multiple node.", () => {
+      const tree = new BinaryTreeNode(
+        5,
+        new BinaryTreeNode(4, undefined, new BinaryTreeNode(4.5)),
+        new BinaryTreeNode(10)
+      );
+
+      expect(tree.inOrder().map((n) => n.value)).toStrictEqual([4, 4.5, 5, 10]);
+    });
+  });
 });
