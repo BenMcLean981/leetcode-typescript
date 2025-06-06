@@ -3,21 +3,41 @@ function romanToInt(s: string): number {
     let i = 0;
 
     while (i < s.length) {
-        const v = values.find((v) => s.slice(i).startsWith(v.symbol));
+        const twoChar = `${s.charAt(i)}${s.charAt(i + 1)}`;
+        const char = s.charAt(i);
+
+        const twoCharValue = map[twoChar];
+        const v = twoCharValue ?? map[char];
 
         if (!v) {
             throw new Error(s);
         }
 
-        result += v.value;
+        result += v;
 
-        i += v.symbol.length;
+        i += twoCharValue !== undefined ? 2 : 1;
     }
 
     return result;
 }
 
 type Value = { symbol: string; value: number };
+
+const map: Record<string, number> = {
+    M: 1000,
+    CM: 900,
+    D: 500,
+    CD: 400,
+    C: 100,
+    XC: 90,
+    L: 50,
+    XL: 40,
+    X: 10,
+    IX: 9,
+    V: 5,
+    IV: 4,
+    I: 1,
+};
 
 const values: ReadonlyArray<Value> = [
     { symbol: "M", value: 1000 },
